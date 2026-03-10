@@ -77,8 +77,16 @@ body::after {
   height:100vh;
 }
 
-/* welcome 和 chat 共享 main 区域 */
-#welcome-screen, #chat { grid-area: main; }
+/* welcome 和 chat 共享 main 区域，用相对容器叠加 */
+#main-area {
+  grid-area: main;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+#welcome-screen, #chat {
+  position: absolute; inset: 0;
+}
 
 /* ══ Sidebar ════════════════════════════════════════════════════════ */
 #sidebar {
@@ -203,8 +211,10 @@ body::after {
   gap:20px; padding:24px;
   text-align:center;
   animation:fade-up .5s ease;
+  overflow:hidden; /* position:absolute 由 #main-area 控制 */
 }
-#welcome-screen.hidden { display:none; }
+#welcome-screen.hidden,
+#chat.hidden { display:none; }
 
 .voice-orb {
   position:relative; width:150px; height:162px;
@@ -277,11 +287,15 @@ body::after {
 
 /* ══ Chat ════════════════════════════════════════════════════════════ */
 #chat {
-  overflow-y:auto; padding:24px 28px;
-  display:flex; flex-direction:column; gap:18px;
-  scroll-behavior:smooth;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scroll-behavior: smooth;
+  /* 消息少时顶部对齐，不撑底 */
+  justify-content: flex-start;
 }
-#chat.hidden { display:none; }
 #chat::-webkit-scrollbar { width:3px; }
 #chat::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
 
@@ -673,9 +687,13 @@ body::after {
 .sp-body{overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px;}
 .sp-section-title{font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
 .sp-field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
-.sp-field label{font-size:.75rem;color:var(--text2);font-weight:500;}
+.sp-field label{font-size:.75rem;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .sp-field input,.sp-field select{background:rgba(14,18,32,.8);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:.82rem;outline:none;transition:border-color .2s,box-shadow .2s;}
 .sp-field input:focus,.sp-field select:focus{border-color:rgba(108,143,255,.55);box-shadow:0 0 0 3px rgba(108,143,255,.1);}
+/* 密钥分组 */
+.sp-keys-section{margin-bottom:16px;}
+.sp-keys-title{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:6px 0 8px;border-bottom:1px solid var(--border1);margin-bottom:10px;}
+.sp-badge-key{font-size:.62rem;font-weight:400;padding:2px 6px;border-radius:4px;background:rgba(108,143,255,.12);color:var(--text3);border:1px solid rgba(108,143,255,.2);}
 .sp-field select option{background:#0e1220;}
 .sp-footer{display:flex;align-items:center;gap:14px;padding:14px 22px 18px;border-top:1px solid rgba(255,255,255,.06);}
 .sp-btn-save{padding:8px 22px;border-radius:9px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;font-size:.82rem;font-weight:600;font-family:inherit;transition:all .2s;box-shadow:0 4px 14px rgba(108,143,255,.35);}

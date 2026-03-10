@@ -59,7 +59,10 @@
     </div>
   </header>
 
-  <!-- ── Welcome (shares grid-area with #chat) ── -->
+  <!-- ── Main area wrapper（welcome + chat 叠加） ── -->
+  <div id="main-area">
+
+  <!-- ── Welcome ── -->
   <div id="welcome-screen">
     <div class="voice-orb">
       <div class="vo-ring"></div><div class="vo-ring"></div><div class="vo-ring"></div>
@@ -84,6 +87,8 @@
 
   <!-- 回底按钮 -->
   <button id="scroll-bottom-btn" title="回到底部">↓</button>
+
+  </div><!-- /#main-area -->
 
   <!-- ── Bottom bar ── -->
   <div id="bottom-bar">
@@ -191,7 +196,7 @@
     </div>
 
     <div class="sp-tabs">
-      <button class="sp-tab active" data-tab="keys">🔑 API 密钥</button>
+      <button class="sp-tab active" data-tab="keys">🔑 密钥</button>
       <button class="sp-tab" data-tab="asr">🎤 识别</button>
       <button class="sp-tab" data-tab="tts">🔊 合成</button>
       <button class="sp-tab" data-tab="llm">🧠 模型</button>
@@ -199,150 +204,248 @@
 
     <div class="sp-body">
 
-      <!-- Keys -->
+      <!-- ── API Keys ── -->
       <div class="sp-tab-pane active" id="tab-keys">
-        <div class="sp-field">
-          <label>🇨🇳 通义千问 · DashScope</label>
-          <div class="sp-input-row">
-            <input type="password" id="sp-qwen-key" placeholder="sk-..." autocomplete="off">
-            <a class="sp-link" href="https://dashscope.aliyuncs.com" target="_blank">获取</a>
+        <div class="sp-keys-section">
+          <div class="sp-keys-title">🌏 国产模型</div>
+          <div class="sp-field">
+            <label>通义千问 · DashScope <span class="sp-badge-key">Qwen + Paraformer ASR + Qwen3-TTS</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-qwen-key" placeholder="sk-..." autocomplete="off">
+              <a class="sp-link" href="https://dashscope.aliyuncs.com" target="_blank">获取</a>
+            </div>
           </div>
-          <small>Qwen 系列模型 + Paraformer ASR + CosyVoice TTS</small>
+          <div class="sp-field">
+            <label>DeepSeek <span class="sp-badge-key">DeepSeek-V3 · R1</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-deepseek-key" placeholder="sk-..." autocomplete="off">
+              <a class="sp-link" href="https://platform.deepseek.com" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>Moonshot · Kimi <span class="sp-badge-key">128K 长文本</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-moonshot-key" placeholder="sk-..." autocomplete="off">
+              <a class="sp-link" href="https://platform.moonshot.cn" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>智谱 · GLM <span class="sp-badge-key">GLM-4 · Z1</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-zhipu-key" placeholder="..." autocomplete="off">
+              <a class="sp-link" href="https://open.bigmodel.cn" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>百川 <span class="sp-badge-key">Baichuan4</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-baichuan-key" placeholder="..." autocomplete="off">
+              <a class="sp-link" href="https://platform.baichuan-ai.com" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>MiniMax <span class="sp-badge-key">ABAB · Text-01</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-minimax-key" placeholder="..." autocomplete="off">
+              <a class="sp-link" href="https://platform.minimax.chat" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>硅基流动 · SiliconFlow <span class="sp-badge-key">国内高速 Qwen/DeepSeek</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-siliconflow-key" placeholder="sk-..." autocomplete="off">
+              <a class="sp-link" href="https://siliconflow.cn" target="_blank">获取</a>
+            </div>
+          </div>
         </div>
-        <div class="sp-field">
-          <label>🤖 OpenAI</label>
-          <div class="sp-input-row">
-            <input type="password" id="sp-openai-key" placeholder="sk-..." autocomplete="off">
-            <a class="sp-link" href="https://platform.openai.com" target="_blank">获取</a>
+
+        <div class="sp-keys-section">
+          <div class="sp-keys-title">🌐 国外模型</div>
+          <div class="sp-field">
+            <label>OpenAI <span class="sp-badge-key">GPT-4o · 4.1 · o4 + Whisper API + TTS</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-openai-key" placeholder="sk-..." autocomplete="off">
+              <a class="sp-link" href="https://platform.openai.com" target="_blank">获取</a>
+            </div>
           </div>
-          <small>GPT-4o / GPT-4.1 + OpenAI TTS</small>
-        </div>
-        <div class="sp-field">
-          <label>🐋 DeepSeek</label>
-          <div class="sp-input-row">
-            <input type="password" id="sp-deepseek-key" placeholder="sk-..." autocomplete="off">
-            <a class="sp-link" href="https://platform.deepseek.com" target="_blank">获取</a>
+          <div class="sp-field">
+            <label>Anthropic · Claude <span class="sp-badge-key">Opus · Sonnet · Haiku</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-anthropic-key" placeholder="sk-ant-..." autocomplete="off">
+              <a class="sp-link" href="https://console.anthropic.com" target="_blank">获取</a>
+            </div>
           </div>
-          <small>DeepSeek-V3 / DeepSeek-R1</small>
-        </div>
-        <div class="sp-field">
-          <label>⚡ Groq</label>
-          <div class="sp-input-row">
-            <input type="password" id="sp-groq-key" placeholder="gsk_..." autocomplete="off">
-            <a class="sp-link" href="https://console.groq.com" target="_blank">获取</a>
+          <div class="sp-field">
+            <label>Google · Gemini <span class="sp-badge-key">2.5 Pro · Flash</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-gemini-key" placeholder="AIza..." autocomplete="off">
+              <a class="sp-link" href="https://ai.google.dev" target="_blank">获取</a>
+            </div>
           </div>
-          <small>Llama3 / Gemma2，超快推理</small>
-        </div>
-        <div class="sp-field">
-          <label>🌊 硅基流动 · SiliconFlow</label>
-          <div class="sp-input-row">
-            <input type="password" id="sp-siliconflow-key" placeholder="sk-..." autocomplete="off">
-            <a class="sp-link" href="https://siliconflow.cn" target="_blank">获取</a>
+          <div class="sp-field">
+            <label>Mistral <span class="sp-badge-key">Large · Small · Codestral</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-mistral-key" placeholder="..." autocomplete="off">
+              <a class="sp-link" href="https://console.mistral.ai" target="_blank">获取</a>
+            </div>
           </div>
-          <small>国内高速，Qwen3 / DeepSeek 系列</small>
+          <div class="sp-field">
+            <label>Groq <span class="sp-badge-key">超快推理 · Llama3 · QwQ</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-groq-key" placeholder="gsk_..." autocomplete="off">
+              <a class="sp-link" href="https://console.groq.com" target="_blank">获取</a>
+            </div>
+          </div>
+          <div class="sp-field">
+            <label>Microsoft Azure <span class="sp-badge-key">TTS + Speech</span></label>
+            <div class="sp-input-row">
+              <input type="password" id="sp-azure-key" placeholder="..." autocomplete="off">
+              <a class="sp-link" href="https://azure.microsoft.com/cognitive-services/speech-services" target="_blank">获取</a>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- ASR -->
+      <!-- ── ASR ── -->
       <div class="sp-tab-pane" id="tab-asr">
         <div class="sp-engine-grid">
-          <label class="sp-engine-card" data-asr="paraformer">
+          <label class="sp-engine-card">
             <div class="sec-top"><span class="sec-icon">🚀</span><input type="radio" name="asr-engine" value="paraformer" checked></div>
             <div class="sec-name">Paraformer</div>
-            <div class="sec-desc">DashScope · 高精度中文 · 实时流式</div>
+            <div class="sec-desc">阿里云 · 高精度中文 · 实时流式</div>
             <span class="sec-badge cloud">云端</span>
           </label>
-          <label class="sp-engine-card" data-asr="whisper">
+          <label class="sp-engine-card">
             <div class="sec-top"><span class="sec-icon">🤖</span><input type="radio" name="asr-engine" value="whisper"></div>
             <div class="sec-name">Whisper</div>
-            <div class="sec-desc">OpenAI 开源 · 本地 · 多语言</div>
+            <div class="sec-desc">本地 faster-whisper · 多语言</div>
             <span class="sec-badge local">本地</span>
           </label>
-          <label class="sp-engine-card" data-asr="funasr">
-            <div class="sec-top"><span class="sec-icon">⚡</span><input type="radio" name="asr-engine" value="funasr"></div>
-            <div class="sec-name">FunASR</div>
-            <div class="sec-desc">阿里开源 · 快速 · 流式</div>
+          <label class="sp-engine-card">
+            <div class="sec-top"><span class="sec-icon">🦙</span><input type="radio" name="asr-engine" value="ollama"></div>
+            <div class="sec-name">Ollama ASR</div>
+            <div class="sec-desc">Ollama Whisper 模型 · 本地私有</div>
             <span class="sec-badge local">本地</span>
           </label>
-          <label class="sp-engine-card" data-asr="azure">
-            <div class="sec-top"><span class="sec-icon">☁️</span><input type="radio" name="asr-engine" value="azure"></div>
-            <div class="sec-name">Azure Speech</div>
-            <div class="sec-desc">微软云 · 多语言 · 高准确率</div>
+          <label class="sp-engine-card">
+            <div class="sec-top"><span class="sec-icon">✨</span><input type="radio" name="asr-engine" value="openai_whisper"></div>
+            <div class="sec-name">OpenAI Whisper</div>
+            <div class="sec-desc">云端 API · 高精度 · 需 OpenAI Key</div>
             <span class="sec-badge cloud">云端</span>
           </label>
         </div>
         <div class="sp-field" style="margin-top:14px">
-          <label>Whisper 模型大小</label>
+          <label>本地 Whisper 模型大小</label>
           <select id="sp-whisper-size">
             <option value="tiny">tiny（最快，精度低）</option>
             <option value="base">base</option>
             <option value="small" selected>small（推荐）</option>
-            <option value="medium">medium</option>
-            <option value="large">large（最准）</option>
+            <option value="medium">medium（高精度）</option>
+            <option value="large-v3">large-v3（最准，较慢）</option>
           </select>
+        </div>
+        <div class="sp-field">
+          <label>Ollama ASR 模型名</label>
+          <input type="text" id="sp-ollama-asr-model" placeholder="whisper" autocomplete="off">
+          <small>需先 ollama pull whisper</small>
         </div>
       </div>
 
-      <!-- TTS -->
+      <!-- ── TTS ── -->
       <div class="sp-tab-pane" id="tab-tts">
         <div class="sp-engine-grid">
-          <label class="sp-engine-card" data-tts="edge">
+          <label class="sp-engine-card">
             <div class="sec-top"><span class="sec-icon">🌐</span><input type="radio" name="tts-engine" value="edge" checked></div>
             <div class="sec-name">Edge TTS</div>
             <div class="sec-desc">微软免费 · 多声音 · 无需 Key</div>
             <span class="sec-badge free">免费</span>
           </label>
-          <label class="sp-engine-card" data-tts="qwen3tts">
+          <label class="sp-engine-card">
             <div class="sec-top"><span class="sec-icon">💎</span><input type="radio" name="tts-engine" value="qwen3tts"></div>
             <div class="sec-name">Qwen3-TTS</div>
-            <div class="sec-desc">通义千问 · 高表现力</div>
+            <div class="sec-desc">阿里云 · 高表现力 · 情感自然</div>
             <span class="sec-badge cloud">云端</span>
           </label>
-          <label class="sp-engine-card" data-tts="openai">
-            <div class="sec-top"><span class="sec-icon">✨</span><input type="radio" name="tts-engine" value="openai"></div>
+          <label class="sp-engine-card">
+            <div class="sec-top"><span class="sec-icon">✨</span><input type="radio" name="tts-engine" value="openai_tts"></div>
             <div class="sec-name">OpenAI TTS</div>
-            <div class="sec-desc">高质量 · 情感自然</div>
+            <div class="sec-desc">高质量 · 多声音 · 需 OpenAI Key</div>
             <span class="sec-badge cloud">云端</span>
           </label>
-          <label class="sp-engine-card" data-tts="cosyvoice">
-            <div class="sec-top"><span class="sec-icon">🎵</span><input type="radio" name="tts-engine" value="cosyvoice"></div>
-            <div class="sec-name">CosyVoice</div>
-            <div class="sec-desc">阿里云 · 自然流畅 · 中文优化</div>
+          <label class="sp-engine-card">
+            <div class="sec-top"><span class="sec-icon">☁️</span><input type="radio" name="tts-engine" value="azure_tts"></div>
+            <div class="sec-name">Azure TTS</div>
+            <div class="sec-desc">微软云 · 神经网络声音 · 低延迟</div>
             <span class="sec-badge cloud">云端</span>
           </label>
-          <label class="sp-engine-card" data-tts="pyttsx3">
+          <label class="sp-engine-card">
+            <div class="sec-top"><span class="sec-icon">🦙</span><input type="radio" name="tts-engine" value="ollama_tts"></div>
+            <div class="sec-name">Ollama TTS</div>
+            <div class="sec-desc">本地 kokoro/orpheus · 完全私有</div>
+            <span class="sec-badge local">本地</span>
+          </label>
+          <label class="sp-engine-card">
             <div class="sec-top"><span class="sec-icon">💻</span><input type="radio" name="tts-engine" value="pyttsx3"></div>
             <div class="sec-name">pyttsx3</div>
-            <div class="sec-desc">系统本地 · 完全离线</div>
+            <div class="sec-desc">系统内置 · 完全离线</div>
             <span class="sec-badge local">本地</span>
           </label>
         </div>
         <div class="sp-field" style="margin-top:14px">
           <label>Edge TTS 声音</label>
           <select id="sp-tts-voice">
-            <option value="zh-CN-XiaoxiaoNeural">晓晓 · 女声 · 温柔</option>
-            <option value="zh-CN-YunxiNeural">云希 · 男声 · 活力</option>
-            <option value="zh-CN-YunjianNeural">云健 · 男声 · 沉稳</option>
-            <option value="zh-CN-XiaoyiNeural">晓伊 · 女声 · 活力</option>
-            <option value="zh-CN-YunyangNeural">云扬 · 男声 · 新闻</option>
-            <option value="en-US-AriaNeural">Aria · 英文 · 女声</option>
-            <option value="en-US-GuyNeural">Guy · 英文 · 男声</option>
+            <optgroup label="中文女声">
+              <option value="zh-CN-XiaoxiaoNeural">晓晓 · 温柔亲切</option>
+              <option value="zh-CN-XiaoyiNeural">晓伊 · 活力可爱</option>
+              <option value="zh-CN-XiaohanNeural">晓涵 · 清晰自然</option>
+              <option value="zh-CN-XiaomengNeural">晓梦 · 甜美</option>
+            </optgroup>
+            <optgroup label="中文男声">
+              <option value="zh-CN-YunxiNeural">云希 · 活力青年</option>
+              <option value="zh-CN-YunjianNeural">云健 · 沉稳成熟</option>
+              <option value="zh-CN-YunyangNeural">云扬 · 新闻播音</option>
+            </optgroup>
+            <optgroup label="英文">
+              <option value="en-US-AriaNeural">Aria · 英文女声</option>
+              <option value="en-US-GuyNeural">Guy · 英文男声</option>
+              <option value="en-US-JennyNeural">Jenny · 英文女声</option>
+            </optgroup>
           </select>
+        </div>
+        <div class="sp-field">
+          <label>OpenAI TTS 声音</label>
+          <select id="sp-openai-tts-voice">
+            <option value="nova">nova（女声·自然）</option>
+            <option value="alloy">alloy（中性·清晰）</option>
+            <option value="echo">echo（男声·低沉）</option>
+            <option value="fable">fable（英式·叙事）</option>
+            <option value="onyx">onyx（男声·沉稳）</option>
+            <option value="shimmer">shimmer（女声·温柔）</option>
+          </select>
+        </div>
+        <div class="sp-field">
+          <label>Ollama TTS 模型名</label>
+          <input type="text" id="sp-ollama-tts-model" placeholder="kokoro" autocomplete="off">
+          <small>支持 kokoro / orpheus 等</small>
+        </div>
+        <div class="sp-field">
+          <label>Azure TTS 区域</label>
+          <input type="text" id="sp-azure-region" placeholder="eastasia" autocomplete="off">
         </div>
       </div>
 
-      <!-- LLM -->
+      <!-- ── LLM ── -->
       <div class="sp-tab-pane" id="tab-llm">
         <div class="sp-field">
           <label>系统提示词</label>
-          <textarea id="sp-system-prompt" rows="5" placeholder="你是一个聪明的语音助手…"></textarea>
+          <textarea id="sp-system-prompt" rows="5" placeholder="你是一个聪明友好的语音助手，叫小新。回答简洁自然，适合语音播报。"></textarea>
         </div>
         <div class="sp-field">
-          <label>Ollama 地址</label>
+          <label>Ollama 服务地址</label>
           <input type="text" id="sp-ollama-url" placeholder="http://localhost:11434" autocomplete="off">
         </div>
         <div class="sp-field">
-          <label>Ollama 默认模型</label>
+          <label>Ollama 默认 LLM 模型</label>
           <input type="text" id="sp-ollama-model" placeholder="qwen2.5:7b" autocomplete="off">
         </div>
       </div>

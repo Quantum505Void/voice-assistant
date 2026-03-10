@@ -31,47 +31,163 @@ cfg = load_config()
 
 # ── Model registry ────────────────────────────────────────────────────────
 def _build_model_registry(c) -> dict:
-    models = {
-        "local": {
-            "label": f"本地 · {c.ollama_model}",
-            "base_url": c.ollama_url,
-            "model": c.ollama_model,
-            "api_key": "",
-            "backend": "ollama",
-        }
+    models = {}
+
+    # ── 本地 Ollama ──────────────────────────────────────────────────────
+    models["local"] = {
+        "label": f"本地 · {c.ollama_model}",
+        "base_url": c.ollama_url, "model": c.ollama_model,
+        "api_key": "", "backend": "ollama",
     }
+
+    # ── 国产云端 ─────────────────────────────────────────────────────────
+    # 通义千问 (Qwen)
     if c.qwen_api_key:
-        remote_models = [
+        for mid, label in [
+            ("qwen3-235b-a22b",   "Qwen3-235B"),
+            ("qwen3-30b-a3b",     "Qwen3-30B"),
             ("qwen3-max",         "Qwen3-Max"),
             ("qwen3.5-plus",      "Qwen3.5-Plus"),
             ("qwen3.5-flash",     "Qwen3.5-Flash"),
             ("qwen-plus",         "Qwen-Plus"),
             ("qwen-turbo",        "Qwen-Turbo"),
-        ]
-        for mid, label in remote_models:
-            models[mid] = {
-                "label": f"远程 · {label}",
-                "base_url": c.qwen_api_url,
-                "model": mid,
-                "api_key": c.qwen_api_key,
-                "backend": "openai",
-            }
-    if c.openai_api_key:
-        for mid, label in [("gpt-4o","GPT-4o"),("gpt-4o-mini","GPT-4o-mini"),("gpt-4.1","GPT-4.1"),("gpt-4.1-mini","GPT-4.1-mini")]:
-            models[mid] = {"label":f"OpenAI · {label}","base_url":"https://api.openai.com/v1","model":mid,"api_key":c.openai_api_key,"backend":"openai"}
+        ]:
+            models[mid] = {"label": f"🌏 千问 · {label}",
+                           "base_url": c.qwen_api_url, "model": mid,
+                           "api_key": c.qwen_api_key, "backend": "openai"}
+
+    # DeepSeek
     if c.deepseek_api_key:
-        for mid, label in [("deepseek-chat","DeepSeek-V3"),("deepseek-reasoner","DeepSeek-R1")]:
-            models[mid] = {"label":f"DeepSeek · {label}","base_url":"https://api.deepseek.com","model":mid,"api_key":c.deepseek_api_key,"backend":"openai"}
-    if c.groq_api_key:
-        for mid, label in [("llama-3.3-70b-versatile","Llama3.3-70B"),("gemma2-9b-it","Gemma2-9B")]:
-            models[mid] = {"label":f"Groq · {label}","base_url":"https://api.groq.com/openai/v1","model":mid,"api_key":c.groq_api_key,"backend":"openai"}
+        for mid, label in [
+            ("deepseek-chat",      "DeepSeek-V3"),
+            ("deepseek-reasoner",  "DeepSeek-R1"),
+        ]:
+            models[mid] = {"label": f"🌏 DeepSeek · {label}",
+                           "base_url": "https://api.deepseek.com", "model": mid,
+                           "api_key": c.deepseek_api_key, "backend": "openai"}
+
+    # Moonshot / Kimi
+    if c.moonshot_api_key:
+        for mid, label in [
+            ("moonshot-v1-128k", "Kimi-128K"),
+            ("moonshot-v1-32k",  "Kimi-32K"),
+            ("moonshot-v1-8k",   "Kimi-8K"),
+        ]:
+            models[mid] = {"label": f"🌏 Kimi · {label}",
+                           "base_url": "https://api.moonshot.cn/v1", "model": mid,
+                           "api_key": c.moonshot_api_key, "backend": "openai"}
+
+    # 智谱 GLM
+    if c.zhipu_api_key:
+        for mid, label in [
+            ("glm-4-plus",    "GLM-4-Plus"),
+            ("glm-4-flash",   "GLM-4-Flash"),
+            ("glm-z1-plus",   "GLM-Z1-Plus"),
+        ]:
+            models[mid] = {"label": f"🌏 智谱 · {label}",
+                           "base_url": "https://open.bigmodel.cn/api/paas/v4", "model": mid,
+                           "api_key": c.zhipu_api_key, "backend": "openai"}
+
+    # 百川
+    if c.baichuan_api_key:
+        for mid, label in [
+            ("Baichuan4-Air",   "百川4-Air"),
+            ("Baichuan4-Turbo", "百川4-Turbo"),
+        ]:
+            models[mid] = {"label": f"🌏 百川 · {label}",
+                           "base_url": "https://api.baichuan-ai.com/v1", "model": mid,
+                           "api_key": c.baichuan_api_key, "backend": "openai"}
+
+    # MiniMax
+    if c.minimax_api_key:
+        for mid, label in [
+            ("MiniMax-Text-01", "MiniMax-Text-01"),
+            ("abab6.5s-chat",   "ABAB-6.5s"),
+        ]:
+            models[mid] = {"label": f"🌏 MiniMax · {label}",
+                           "base_url": "https://api.minimax.chat/v1", "model": mid,
+                           "api_key": c.minimax_api_key, "backend": "openai"}
+
+    # 硅基流动
     if c.siliconflow_api_key:
-        for mid, label in [("Qwen/Qwen3-8B","Qwen3-8B"),("deepseek-ai/DeepSeek-V3","DeepSeek-V3")]:
-            models[mid] = {"label":f"硅基 · {label}","base_url":"https://api.siliconflow.cn/v1","model":mid,"api_key":c.siliconflow_api_key,"backend":"openai"}
+        for mid, label in [
+            ("Qwen/Qwen3-8B",             "Qwen3-8B"),
+            ("deepseek-ai/DeepSeek-V3",   "DeepSeek-V3"),
+            ("deepseek-ai/DeepSeek-R1",   "DeepSeek-R1"),
+            ("THUDM/glm-4-9b-chat",       "GLM-4-9B"),
+            ("meta-llama/Llama-3.3-70B-Instruct", "Llama3.3-70B"),
+        ]:
+            models[mid] = {"label": f"🌏 硅基 · {label}",
+                           "base_url": "https://api.siliconflow.cn/v1", "model": mid,
+                           "api_key": c.siliconflow_api_key, "backend": "openai"}
+
+    # ── 国外云端 ─────────────────────────────────────────────────────────
+    # OpenAI
+    if c.openai_api_key:
+        for mid, label in [
+            ("gpt-4o",         "GPT-4o"),
+            ("gpt-4o-mini",    "GPT-4o-mini"),
+            ("gpt-4.1",        "GPT-4.1"),
+            ("gpt-4.1-mini",   "GPT-4.1-mini"),
+            ("o4-mini",        "o4-mini"),
+        ]:
+            models[mid] = {"label": f"🌐 OpenAI · {label}",
+                           "base_url": "https://api.openai.com/v1", "model": mid,
+                           "api_key": c.openai_api_key, "backend": "openai"}
+
+    # Anthropic Claude (via OpenRouter openai-compat)
+    if c.anthropic_api_key:
+        for mid, label in [
+            ("claude-opus-4-5",    "Claude Opus 4.5"),
+            ("claude-sonnet-4-5",  "Claude Sonnet 4.5"),
+            ("claude-haiku-3-5",   "Claude Haiku 3.5"),
+        ]:
+            models["claude/" + mid] = {"label": f"🌐 Claude · {label}",
+                                       "base_url": "https://api.anthropic.com/v1",
+                                       "model": mid,
+                                       "api_key": c.anthropic_api_key,
+                                       "backend": "anthropic"}
+
+    # Gemini (OpenAI-compatible endpoint)
+    if c.gemini_api_key:
+        for mid, label in [
+            ("gemini-2.5-pro",    "Gemini 2.5 Pro"),
+            ("gemini-2.5-flash",  "Gemini 2.5 Flash"),
+            ("gemini-2.0-flash",  "Gemini 2.0 Flash"),
+        ]:
+            models["gemini/" + mid] = {
+                "label": f"🌐 Gemini · {label}",
+                "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                "model": mid, "api_key": c.gemini_api_key, "backend": "openai",
+            }
+
+    # Mistral
+    if c.mistral_api_key:
+        for mid, label in [
+            ("mistral-large-latest",  "Mistral-Large"),
+            ("mistral-small-latest",  "Mistral-Small"),
+            ("codestral-latest",      "Codestral"),
+        ]:
+            models[mid] = {"label": f"🌐 Mistral · {label}",
+                           "base_url": "https://api.mistral.ai/v1", "model": mid,
+                           "api_key": c.mistral_api_key, "backend": "openai"}
+
+    # Groq
+    if c.groq_api_key:
+        for mid, label in [
+            ("llama-3.3-70b-versatile", "Llama3.3-70B"),
+            ("llama-3.1-8b-instant",    "Llama3.1-8B"),
+            ("gemma2-9b-it",            "Gemma2-9B"),
+            ("qwen-qwq-32b",            "QwQ-32B"),
+        ]:
+            models[mid] = {"label": f"🌐 Groq · {label}",
+                           "base_url": "https://api.groq.com/openai/v1", "model": mid,
+                           "api_key": c.groq_api_key, "backend": "openai"}
+
     return models
 
-MODEL_REGISTRY   = _build_model_registry(cfg)
-DEFAULT_MODEL    = "local"
+MODEL_REGISTRY = _build_model_registry(cfg)
+DEFAULT_MODEL  = "local"
 
 # ── Global service singletons ─────────────────────────────────────────────
 _asr:        Optional[ASR]    = None
@@ -98,11 +214,14 @@ def _get_asr() -> ASR:
     global _asr
     if _asr is None:
         _asr = ASR(
-            model_size = cfg.whisper_model,
-            device     = cfg.device,
-            language   = cfg.language,
-            api_key    = cfg.asr_api_key,
-            engine     = cfg.asr_engine,
+            model_size       = cfg.whisper_model,
+            device           = cfg.device,
+            language         = cfg.language,
+            api_key          = cfg.asr_api_key,
+            engine           = cfg.asr_engine,
+            ollama_url       = cfg.ollama_url,
+            ollama_asr_model = cfg.ollama_asr_model,
+            openai_api_key   = cfg.openai_api_key,
         )
         _asr._load()
     return _asr
@@ -120,8 +239,19 @@ def _get_llm(key: str = DEFAULT_MODEL) -> LLMClient:
 def _get_tts() -> TTS:
     global _tts_engine, _tts_queue, _tts_thread
     if _tts_engine is None:
-        _tts_engine = TTS(cfg.tts_engine, api_key=cfg.tts_api_key,
-                          voice=getattr(cfg, "tts_voice", "zh-CN-XiaoxiaoNeural"))
+        _tts_engine = TTS(
+            engine           = cfg.tts_engine,
+            api_key          = cfg.tts_api_key,
+            voice            = cfg.tts_voice,
+            openai_api_key   = cfg.openai_api_key,
+            openai_voice     = cfg.openai_tts_voice,
+            openai_tts_model = cfg.openai_tts_model,
+            azure_key        = cfg.azure_tts_key,
+            azure_region     = cfg.azure_tts_region,
+            azure_voice      = cfg.azure_tts_voice,
+            ollama_url       = cfg.ollama_url,
+            ollama_tts_model = cfg.ollama_tts_model,
+        )
         _tts_queue = queue.Queue()
         _tts_thread = threading.Thread(
             target=_tts_worker, args=(_tts_queue, _tts_engine), daemon=True)
@@ -231,22 +361,44 @@ async def health():
 
 @app.get("/config")
 async def get_config():
-    """返回当前配置供设置面板预填（API key 只返回是否存在）"""
+    """返回当前配置供设置面板预填（API key 只返回脱敏后的值）"""
     def mask(v: str) -> str:
         if not v: return ""
         return v[:4] + "…" + v[-4:] if len(v) > 10 else "****"
     return {
+        # LLM keys
         "qwen_api_key":        mask(cfg.qwen_api_key),
         "openai_api_key":      mask(cfg.openai_api_key),
         "deepseek_api_key":    mask(cfg.deepseek_api_key),
         "groq_api_key":        mask(cfg.groq_api_key),
         "siliconflow_api_key": mask(cfg.siliconflow_api_key),
+        "moonshot_api_key":    mask(cfg.moonshot_api_key),
+        "baichuan_api_key":    mask(cfg.baichuan_api_key),
+        "zhipu_api_key":       mask(cfg.zhipu_api_key),
+        "minimax_api_key":     mask(cfg.minimax_api_key),
+        "anthropic_api_key":   mask(cfg.anthropic_api_key),
+        "gemini_api_key":      mask(cfg.gemini_api_key),
+        "mistral_api_key":     mask(cfg.mistral_api_key),
+        # ASR
         "asr_engine":          cfg.asr_engine,
+        "asr_api_key":         mask(cfg.asr_api_key),
+        "xunfei_app_id":       mask(cfg.xunfei_app_id),
+        "xunfei_api_key":      mask(cfg.xunfei_api_key),
+        # TTS
         "tts_engine":          cfg.tts_engine,
         "tts_voice":           cfg.tts_voice,
+        "tts_api_key":         mask(cfg.tts_api_key),
+        "azure_tts_key":       mask(cfg.azure_tts_key),
+        "azure_tts_region":    cfg.azure_tts_region,
+        "azure_tts_voice":     cfg.azure_tts_voice,
+        "openai_tts_voice":    cfg.openai_tts_voice,
+        "openai_tts_model":    cfg.openai_tts_model,
+        # Ollama
         "system_prompt":       cfg.system_prompt,
         "ollama_url":          cfg.ollama_url,
         "ollama_model":        cfg.ollama_model,
+        "ollama_asr_model":    cfg.ollama_asr_model,
+        "ollama_tts_model":    cfg.ollama_tts_model,
         "whisper_model":       cfg.whisper_model,
     }
 
@@ -323,29 +475,47 @@ async def ws_endpoint(websocket: WebSocket):
             elif mtype == "settings_save":
                 import yaml as _yaml
                 keys = msg.get("keys", {})
-                # API keys
-                for field in ("openai_api_key","deepseek_api_key","groq_api_key",
-                              "siliconflow_api_key","qwen_api_key"):
+                # 所有可写字段（API keys + 配置）
+                writable_fields = (
+                    # LLM keys
+                    "openai_api_key", "deepseek_api_key", "groq_api_key",
+                    "siliconflow_api_key", "qwen_api_key",
+                    "moonshot_api_key", "baichuan_api_key", "zhipu_api_key",
+                    "minimax_api_key", "anthropic_api_key", "gemini_api_key",
+                    "mistral_api_key", "cohere_api_key",
+                    # ASR keys
+                    "asr_api_key",
+                    "xunfei_app_id", "xunfei_api_key", "xunfei_api_secret",
+                    # TTS keys
+                    "tts_api_key", "azure_tts_key",
+                    # Ollama
+                    "ollama_url", "ollama_model", "ollama_asr_model", "ollama_tts_model",
+                    # OpenAI TTS
+                    "openai_tts_voice", "openai_tts_model",
+                    # Azure TTS
+                    "azure_tts_region", "azure_tts_voice",
+                    # Other
+                    "system_prompt", "whisper_model",
+                )
+                for field in writable_fields:
                     if field in keys and keys[field]:
                         setattr(cfg, field, keys[field])
-                # System prompt & ollama
-                for field in ("system_prompt", "ollama_url", "ollama_model"):
-                    if field in keys and keys[field]:
-                        setattr(cfg, field, keys[field])
+
                 # ASR engine
                 if "asr_engine" in keys and keys["asr_engine"]:
                     cfg.asr_engine = keys["asr_engine"]
                     _reset_asr()
-                    asr = _get_asr()  # 重新初始化供本连接使用
+                    asr = _get_asr()
                 # TTS engine
                 if "tts_engine" in keys and keys["tts_engine"]:
                     cfg.tts_engine = keys["tts_engine"]
                     _reset_tts()
-                # TTS voice（热更新，不重建引擎）
+                # TTS voice 热更新
                 if "tts_voice" in keys and keys["tts_voice"]:
                     cfg.tts_voice = keys["tts_voice"]
                     if _tts_engine:
                         _tts_engine.voice = keys["tts_voice"]
+
                 MODEL_REGISTRY = _build_model_registry(cfg)
                 _llm_pool.clear()
                 HTML = _render_html()
@@ -357,8 +527,10 @@ async def ws_endpoint(websocket: WebSocket):
                     _raw.update({k: v for k, v in keys.items() if v})
                     with open(config_path, "w") as _f:
                         _yaml.dump(_raw, _f, allow_unicode=True)
-                await send({"type":"status","text":"设置已保存","color":"green"})
-                await send({"type":"models_updated","options":[{"key":k,"label":v["label"]} for k,v in MODEL_REGISTRY.items()]})
+                await send({"type": "status", "text": "设置已保存", "color": "green"})
+                await send({"type": "models_updated", "options": [
+                    {"key": k, "label": v["label"]} for k, v in MODEL_REGISTRY.items()
+                ]})
 
     except WebSocketDisconnect:
         _tts_enabled.pop(cid, None)

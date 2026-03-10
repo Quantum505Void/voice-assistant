@@ -179,7 +179,7 @@ function onWsMessage(e) {
 
     case 'status':
       setStatus(msg.text, msg.color || 'green');
-      if (msg.color === 'green' && msg.text !== '就绪') showToast(msg.text, 'success');
+      if (msg.toast) showToast(msg.text, msg.color === 'green' ? 'success' : 'info');
       break;
 
     case 'cleared':
@@ -627,6 +627,7 @@ function bindModelItems() {
       btn.classList.add('active');
       document.getElementById('chip-llm-label').textContent = label.replace(/^.*·\s*/, '');
       wsSend({ type: 'model_switch', key });
+      showToast('🧠 已切换: ' + label, 'success');
       closeAllPopups();
     });
   });
@@ -670,24 +671,34 @@ document.querySelectorAll('[data-tts-engine]').forEach(btn => {
 ══════════════════════════════════════════ */
 function openSettings() {
   $('settings-panel').classList.add('show');
-  // 预填当前配置
   fetch('/config').then(r => r.json()).then(c => {
     const map = {
-      'sp-qwen-key':        c.qwen_api_key,
-      'sp-openai-key':      c.openai_api_key,
-      'sp-deepseek-key':    c.deepseek_api_key,
-      'sp-groq-key':        c.groq_api_key,
-      'sp-siliconflow-key': c.siliconflow_api_key,
-      'sp-system-prompt':   c.system_prompt,
-      'sp-ollama-url':      c.ollama_url,
-      'sp-ollama-model':    c.ollama_model,
+      'sp-qwen-key':          c.qwen_api_key,
+      'sp-openai-key':        c.openai_api_key,
+      'sp-deepseek-key':      c.deepseek_api_key,
+      'sp-groq-key':          c.groq_api_key,
+      'sp-siliconflow-key':   c.siliconflow_api_key,
+      'sp-moonshot-key':      c.moonshot_api_key,
+      'sp-baichuan-key':      c.baichuan_api_key,
+      'sp-zhipu-key':         c.zhipu_api_key,
+      'sp-minimax-key':       c.minimax_api_key,
+      'sp-anthropic-key':     c.anthropic_api_key,
+      'sp-gemini-key':        c.gemini_api_key,
+      'sp-mistral-key':       c.mistral_api_key,
+      'sp-azure-key':         c.azure_tts_key,
+      'sp-system-prompt':     c.system_prompt,
+      'sp-ollama-url':        c.ollama_url,
+      'sp-ollama-model':      c.ollama_model,
+      'sp-ollama-asr-model':  c.ollama_asr_model,
+      'sp-ollama-tts-model':  c.ollama_tts_model,
+      'sp-azure-region':      c.azure_tts_region,
     };
     for (const [id, val] of Object.entries(map)) {
       const el = $(id); if (el && val) el.value = val;
     }
-    if (c.tts_voice) { const el = $('sp-tts-voice'); if (el) el.value = c.tts_voice; }
-    if (c.whisper_model) { const el = $('sp-whisper-size'); if (el) el.value = c.whisper_model; }
-    // ASR/TTS engine radio
+    if (c.tts_voice)        { const el = $('sp-tts-voice');        if (el) el.value = c.tts_voice; }
+    if (c.openai_tts_voice) { const el = $('sp-openai-tts-voice'); if (el) el.value = c.openai_tts_voice; }
+    if (c.whisper_model)    { const el = $('sp-whisper-size');     if (el) el.value = c.whisper_model; }
     const asrR = document.querySelector(`input[name="asr-engine"][value="${c.asr_engine}"]`);
     if (asrR) asrR.checked = true;
     const ttsR = document.querySelector(`input[name="tts-engine"][value="${c.tts_engine}"]`);
@@ -713,29 +724,48 @@ document.querySelectorAll('.sp-tab').forEach(tab => {
 
 $('sp-save').onclick = () => {
   const fieldMap = {
+    // 国产 LLM
     'sp-qwen-key':        'qwen_api_key',
-    'sp-openai-key':      'openai_api_key',
     'sp-deepseek-key':    'deepseek_api_key',
-    'sp-groq-key':        'groq_api_key',
+    'sp-moonshot-key':    'moonshot_api_key',
+    'sp-zhipu-key':       'zhipu_api_key',
+    'sp-baichuan-key':    'baichuan_api_key',
+    'sp-minimax-key':     'minimax_api_key',
     'sp-siliconflow-key': 'siliconflow_api_key',
+    // 国外 LLM
+    'sp-openai-key':      'openai_api_key',
+    'sp-anthropic-key':   'anthropic_api_key',
+    'sp-gemini-key':      'gemini_api_key',
+    'sp-mistral-key':     'mistral_api_key',
+    'sp-groq-key':        'groq_api_key',
+    'sp-azure-key':       'azure_tts_key',
   };
   const keys = {};
   for (const [id, field] of Object.entries(fieldMap)) {
     const v = $(id)?.value.trim();
     if (v) keys[field] = v;
   }
-  const voice = $('sp-tts-voice')?.value;
-  if (voice) keys.tts_voice = voice;
-
+  // TTS options
+  const ttsVoice = $('sp-tts-voice')?.value;
+  if (ttsVoice) keys.tts_voice = ttsVoice;
+  const openaiTtsVoice = $('sp-openai-tts-voice')?.value;
+  if (openaiTtsVoice) keys.openai_tts_voice = openaiTtsVoice;
+  const ollamaTtsModel = $('sp-ollama-tts-model')?.value.trim();
+  if (ollamaTtsModel) keys.ollama_tts_model = ollamaTtsModel;
+  const azureRegion = $('sp-azure-region')?.value.trim();
+  if (azureRegion) keys.azure_tts_region = azureRegion;
+  // ASR options
+  const ollamaAsrModel = $('sp-ollama-asr-model')?.value.trim();
+  if (ollamaAsrModel) keys.ollama_asr_model = ollamaAsrModel;
+  const whisperSize = $('sp-whisper-size')?.value;
+  if (whisperSize) keys.whisper_model = whisperSize;
   // ASR engine
   const asrEngine = document.querySelector('input[name="asr-engine"]:checked')?.value;
   if (asrEngine) keys.asr_engine = asrEngine;
-
   // TTS engine
   const ttsEngine = document.querySelector('input[name="tts-engine"]:checked')?.value;
   if (ttsEngine) keys.tts_engine = ttsEngine;
-
-  // system prompt & ollama
+  // LLM settings
   const sp = $('sp-system-prompt')?.value.trim();
   if (sp) keys.system_prompt = sp;
   const ollamaUrl = $('sp-ollama-url')?.value.trim();
@@ -783,7 +813,7 @@ function saveHistory() {
       role: isUser ? 'user' : 'assistant',
       text: clone.innerText.trim(),
       ts:   row.querySelector('.ts')?.textContent || '',
-      html: isUser ? null : bubble.innerHTML,
+      html: isUser ? null : clone.innerHTML,  // clone 已去除按钮
     });
   });
   try {
