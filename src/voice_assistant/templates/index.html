@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小新语音助手 🔧</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar">
+    <div class="sb-logo">🔧</div>
+
+    <div class="sb-top">
+      <button class="sb-btn active" id="btn-tts" data-tip="TTS 开/关">🔊</button>
+      <button class="sb-btn" id="btn-rt" data-tip="实时对话">🎙</button>
+      <button class="sb-btn" id="btn-settings" data-tip="设置">⚙️</button>
+    </div>
+
+    <div class="sb-bot">
+      <button class="sb-btn sb-danger" id="btn-clear" data-tip="清空对话">🗑</button>
+    </div>
+  </aside>
+
+  <!-- ── Header ── -->
+  <header id="header">
+    <div class="hdr-title">
+      <h1>小新语音助手</h1>
+      <div class="sub" id="hdr-sub">就绪</div>
+    </div>
+    <div class="hdr-right">
+      <div class="status-pill">
+        <div class="status-dot green" id="status-dot"></div>
+        <span id="status-text">连接中...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Welcome（独立 grid 区域，flex 居中）── -->
+  <div id="welcome-screen">
+    <div class="voice-orb">
+      <div class="vo-ring"></div><div class="vo-ring"></div><div class="vo-ring"></div>
+      <div class="vo-core">🔧</div>
+      <div class="vo-eq">
+        <div class="vo-bar"></div><div class="vo-bar"></div><div class="vo-bar"></div>
+        <div class="vo-bar"></div><div class="vo-bar"></div>
+      </div>
+    </div>
+    <h2>你好，我是小新</h2>
+    <p>语音 · 文字 · 双模式推理</p>
+    <div class="welcome-chips">
+      <span class="chip" onclick="document.getElementById('text-input').focus()">⌨ 文字</span>
+      <span class="chip" id="chip-ptt">🎤 按住录音</span>
+      <span class="chip" id="chip-space">␣ Space PTT</span>
+      <span class="chip" id="chip-rt">🎙 实时模式</span>
+    </div>
+  </div>
+
+  <!-- ── Chat messages ── -->
+  <main id="chat"></main>
+
+  <!-- ── Bottom bar（wave + input）── -->
+  <div id="bottom-bar">
+    <div id="wave-zone">
+      <span id="wave-label">待机</span>
+      <canvas id="waveform"></canvas>
+      <span id="rec-timer"></span>
+    </div>
+    <div id="input-zone">
+      <textarea id="text-input" placeholder="输入消息… Enter 发送，Shift+Enter 换行" rows="1"></textarea>
+      <button class="action-btn" id="btn-mic" title="按住录音（Space）">🎤</button>
+      <button class="action-btn" id="btn-send" title="发送（Enter）">↑</button>
+    </div>
+  </div>
+
+  <!-- ── Engine Bar（左下角）── -->
+  <div id="engine-bar">
+    <div class="eng-item" id="eng-llm">
+      <span class="eng-label">LLM</span>
+      <select id="model-select">{{model_options}}</select>
+    </div>
+    <div class="eng-divider"></div>
+    <div class="eng-item eng-btn" id="eng-asr" data-tip="切换识别引擎">
+      <span class="eng-label">ASR</span>
+      <span class="eng-val" id="eng-asr-val">Paraformer</span>
+    </div>
+    <div class="eng-divider"></div>
+    <div class="eng-item eng-btn" id="eng-tts" data-tip="切换合成引擎">
+      <span class="eng-label">TTS</span>
+      <span class="eng-val" id="eng-tts-val">Edge</span>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ── Popup menus ── -->
+<div class="eng-popup" id="popup-asr">
+  <div class="popup-title">语音识别引擎</div>
+  <button class="popup-item active" data-asr="paraformer">🚀 Paraformer（DashScope）</button>
+  <button class="popup-item" data-asr="whisper">🤖 Whisper（本地）</button>
+</div>
+<div class="eng-popup" id="popup-tts-engine">
+  <div class="popup-title">语音合成引擎</div>
+  <button class="popup-item active" data-tts-engine="edge">🌐 Edge TTS（免费）</button>
+  <button class="popup-item" data-tts-engine="qwen3tts">✨ Qwen3-TTS</button>
+  <button class="popup-item" data-tts-engine="pyttsx3">💻 pyttsx3（本地）</button>
+</div>
+
+<!-- ── Realtime Overlay ── -->
+<div id="rt-overlay">
+  <button class="rt-close-btn" id="rt-close">✕ 退出</button>
+  <div class="rt-orb-wrap">
+    <div class="rt-ring"></div><div class="rt-ring"></div><div class="rt-ring"></div>
+    <div class="rt-orb listening" id="rt-orb">🎙</div>
+    <div class="rt-processing-spin"></div>
+  </div>
+  <div class="rt-state-text listening" id="rt-state-text">等待说话…</div>
+  <canvas class="rt-wave-canvas" id="rt-wave-canvas"></canvas>
+  <div class="rt-transcript" id="rt-transcript"></div>
+</div>
+
+<div id="settings-panel">
+  <div class="sp-backdrop"></div>
+  <div class="sp-dialog">
+    <div class="sp-header">
+      <h2>⚙️ 设置</h2>
+      <button class="sp-close" id="sp-close">✕</button>
+    </div>
+    <div class="sp-body">
+      <div class="sp-section">
+        <div class="sp-section-title">API 密钥</div>
+        <div class="sp-field"><label>通义千问 (DashScope)</label><input type="password" id="sp-qwen-key" placeholder="sk-..." autocomplete="off"></div>
+        <div class="sp-field"><label>OpenAI</label><input type="password" id="sp-openai-key" placeholder="sk-..." autocomplete="off"></div>
+        <div class="sp-field"><label>DeepSeek</label><input type="password" id="sp-deepseek-key" placeholder="sk-..." autocomplete="off"></div>
+        <div class="sp-field"><label>Groq</label><input type="password" id="sp-groq-key" placeholder="gsk_..." autocomplete="off"></div>
+        <div class="sp-field"><label>硅基流动 (SiliconFlow)</label><input type="password" id="sp-siliconflow-key" placeholder="sk-..." autocomplete="off"></div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-section-title">语音设置</div>
+        <div class="sp-field">
+          <label>Edge TTS 声音</label>
+          <select id="sp-tts-voice">
+            <option value="zh-CN-XiaoxiaoNeural">晓晓 (女声·温柔)</option>
+            <option value="zh-CN-YunxiNeural">云希 (男声·活力)</option>
+            <option value="zh-CN-YunjianNeural">云健 (男声·沉稳)</option>
+            <option value="zh-CN-XiaoyiNeural">晓伊 (女声·活力)</option>
+            <option value="zh-CN-YunyangNeural">云扬 (男声·新闻)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="sp-footer">
+      <button class="sp-btn-save" id="sp-save">💾 保存</button>
+      <span class="sp-hint" id="sp-hint"></span>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual envs
+.venv/
+venv/
+env/
+.uv/
+
+# uv
+.python-version
+
+# Secrets — NEVER commit API keys
+config.yaml
+config.local.yaml
+.env
+.env.*
+secrets.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp audio files
+*.webm
+*.wav
+/tmp/
