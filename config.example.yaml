@@ -1,0 +1,34 @@
+# config.example.yaml — 复制为 config.yaml 并填入你的 API key
+
+whisper_model: small       # tiny / base / small / medium (fallback)
+device: cpu                # cpu / cuda
+language: zh               # zh / en / auto
+asr_engine: auto           # auto / paraformer / whisper
+asr_api_key: ""            # DashScope key → Paraformer ASR
+
+# ── 本地 Ollama ──────────────────────────────────────────────
+ollama_url: http://localhost:11434
+ollama_model: qwen2.5:7b
+
+# ── 远程 LLM API Keys（留空则不显示对应模型）──────────────────
+qwen_api_key: ""           # DashScope: https://dashscope.aliyuncs.com
+qwen_api_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+openai_api_key: ""         # OpenAI: https://platform.openai.com
+deepseek_api_key: ""       # DeepSeek: https://platform.deepseek.com
+groq_api_key: ""           # Groq: https://console.groq.com
+siliconflow_api_key: ""    # 硅基流动: https://siliconflow.cn
+
+# ── TTS ──────────────────────────────────────────────────────
+tts_engine: edge            # edge / qwen3tts / pyttsx3 / auto
+tts_api_key: ""             # DashScope key (qwen3tts)
+tts_voice: zh-CN-XiaoxiaoNeural  # Edge TTS 声音
+
+# ── VAD ──────────────────────────────────────────────────────
+vad_aggressiveness: 2
+silence_duration: 1.2
+sample_rate: 16000
+
+system_prompt: |
+  你是一个聪明、友好的语音助手，名叫小新。
+  回答简洁自然，适合语音播报。避免使用过多 Markdown 符号。
+  中英文都能回答，以用户使用的语言为准。
